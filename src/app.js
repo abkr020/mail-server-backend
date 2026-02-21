@@ -2,12 +2,14 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./db/db.js";
 import authRoutes from "./routes/auth.routes.js";
-import paymentRoutes from "./routes/payment.routes.js";
-import productRoutes from "./routes/product.routes.js";
-import addressRoutes from "./routes/address.routes.js";
-import orderRoutes from "./routes/order.routes.js";
+import mailRoutes from "./routes/mail.routes.js";
+// import paymentRoutes from "./routes/payment.routes.js";
+// import productRoutes from "./routes/product.routes.js";
+// import addressRoutes from "./routes/address.routes.js";
+// import orderRoutes from "./routes/order.routes.js";
 import fs from "fs";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 const LOG_DIR = path.join(process.cwd(), "logs");
 const LOG_FILE = path.join(LOG_DIR, "requests.log");
@@ -22,6 +24,7 @@ app.set("trust proxy", true);
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 
 // Connect DB
 connectDB();
@@ -66,6 +69,7 @@ app.use(
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/mail", mailRoutes);
 // app.use("/api/payment", paymentRoutes);
 // app.use("/api/products", productRoutes);
 // app.use("/api/address", addressRoutes);

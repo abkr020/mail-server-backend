@@ -42,23 +42,55 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: "Invalid email or password ❌" });
+    if (!user)
+      return res.status(401).json({ message: "Invalid email or password ❌" });
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ message: "Invalid email or password ❌" });
+    if (!match)
+      return res.status(401).json({ message: "Invalid email or password ❌" });
 
     const token = generateToken(user);
 
+    // 🍪 Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,          // JS cannot access cookie (XSS protection)
+      // 🔐 What does secure mean in cookies?
+
+      // secure: true
+
+      // ➡️ The cookie will be sent ONLY over HTTPS
+      // ➡️ The browser will NOT send it over HTTP
+      secure: process.env.NODE_ENV === "production", // HTTPS only in prod
+      sameSite: "strict",      // CSRF protection
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     return res.json({
       message: "Login successful ✅",
-      user: { id: user._id, name: user.name, email: user.email },
       token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+export const me = async (req, res) => {
+  res.json({
+    user: {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+    },
+  });
+};
+
+
 export const googleAuth = async (req, res) => {
   const { code, dynamicRedirectUri } = req.body;
 
@@ -74,7 +106,7 @@ export const googleAuth = async (req, res) => {
 
   try {
     // Get result from handleGoogleAuth (already includes user + token)
-    const result = await handleGoogleAuth(code,dynamicRedirectUri);
+    const result = await handleGoogleAuth(code, dynamicRedirectUri);
 
     // Send that directly to frontend
     res.status(200).json(result);
