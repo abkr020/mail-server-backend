@@ -62,7 +62,32 @@ app.use(
     credentials: true,
   })
 );
+// ! for production 
+// const normalize = (url) => url?.replace(/\/$/, "");
 
+// const allowedOrigins = [
+//   FRONTEND_URL,
+//   FRONTEND_URL_RAASNUTRITION,
+//   FRONTEND_URL_SLVAI,
+// ].map(normalize);
+
+// app.use(
+//   cors({
+//     origin(origin, callback) {
+//       if (!origin) return callback(null, true);
+
+//       if (allowedOrigins.includes(normalize(origin))) {
+//         return callback(null, true);
+//       }
+
+//       console.error("❌ Blocked by CORS:", origin);
+//       callback(new Error("Not allowed by CORS"));
+//     },
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 // ✅ Handle CORS preflight requests
 // app.options("/*", cors());
 

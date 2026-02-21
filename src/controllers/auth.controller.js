@@ -60,8 +60,21 @@ export const login = async (req, res) => {
 
       // ➡️ The cookie will be sent ONLY over HTTPS
       // ➡️ The browser will NOT send it over HTTP
-      secure: process.env.NODE_ENV === "production", // HTTPS only in prod
-      sameSite: "strict",      // CSRF protection
+      // secure: process.env.NODE_ENV === "production", // HTTPS only in prod
+      secure: true, // HTTPS only in prod
+
+      // ❌ Why sameSite: "strict" breaks login
+
+      // Your setup:
+
+      // Frontend → Vercel
+
+      // Backend → Render
+
+      // Different domains = cross-site request
+
+      sameSite: "none",      // CSRF protection
+      // sameSite: "strict",      // CSRF protection
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
