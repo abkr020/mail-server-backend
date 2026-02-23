@@ -6,7 +6,7 @@ import { handleGoogleAuth } from "../services/auth.service.js";
 // Helper: generate JWT token
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, email: user.email },
+    { _id: user._id,id: user._id, email: user.email },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
   );

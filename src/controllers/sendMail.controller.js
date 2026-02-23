@@ -11,7 +11,8 @@ export const sendMail = async (req, res) => {
     console.log("🆔 Trace ID :", traceId);
 
     try {
-        const sender = req.user; // from JWT
+        // const sender = req.user; // from JWT
+        const sender = req.user_from_cookies; // from JWT
         const { to, subject, text, html } = req.body;
 
         console.log("👤 Sender :", sender.email);
@@ -67,8 +68,8 @@ export const sendMail = async (req, res) => {
         // Save failed attempt
         try {
             await SendMail.create({
-                senderUser: req.user._id,
-                from: req.user.email,
+                senderUser: req.user_from_cookies._id,
+                from: req.user_from_cookies.email,
                 to: req.body?.to,
                 subject: req.body?.subject,
                 text: req.body?.text,
