@@ -2,7 +2,9 @@ import { Mail } from "../models/Mail.model.js";
 
 export const getMyMails = async (req, res) => {
   try {
-    const userEmail = req.user.email; // 🔥 from verified JWT
+    // const userEmail = req.user.email; // 🔥 from verified JWT
+    const userEmail = req.user_from_cookies.email; // 🔥 from verified JWT
+
 
     const mails = await Mail.find({ to: userEmail })
       .sort({ createdAt: -1 })

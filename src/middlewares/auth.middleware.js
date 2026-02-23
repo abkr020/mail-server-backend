@@ -17,7 +17,7 @@ export const protect = async (req, res, next) => {
       return res.status(401).json({ message: "User not found" });
     }
 
-    req.user = user; // 🔥 attach user to request
+    req.user_from_cookies = user; // 🔥 attach user to request
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
