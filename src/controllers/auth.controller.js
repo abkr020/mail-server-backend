@@ -21,6 +21,13 @@ const setAuthCookie = (res, token) => {
     path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
+  // ! use the below for safari
+  //   res.cookie("token", token, {
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: "lax", // or strict
+  //   domain: ".slvai.tech",
+  // });
 };
 // Signup
 export const signup = async (req, res) => {
