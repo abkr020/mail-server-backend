@@ -6,16 +6,31 @@ import { handleGoogleAuth } from "../services/auth.service.js";
 // Helper: generate JWT token
 const generateToken = (user) => {
   return jwt.sign(
-    { _id: user._id,id: user._id, email: user.email },
+    { _id: user._id, id: user._id, email: user.email },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
   );
 };
 
+// Helper: set auth cookie
+const setAuthCookie = (res, token) => {
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+};
 // Signup
 export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    // Enforce @slvai.tech domain
+    if (!email.endsWith("@slvai.tech")) {
+      return res.status(400).json({ message: "Email must be a @slvai.tech address" });
+    }
 
     const existed = await User.findOne({ email });
     if (existed) return res.status(400).json({ message: "User already exists" });
@@ -24,6 +39,9 @@ export const signup = async (req, res) => {
     const newUser = await User.create({ name, email, password: hashedPassword });
 
     const token = generateToken(newUser);
+
+    // 🍪 Set cookie on signup too
+    setAuthCookie(res, token);
 
     return res.status(201).json({
       message: "Signup successful ✅",
@@ -75,7 +93,7 @@ export const login = async (req, res) => {
 
       sameSite: "none",      // CSRF protection
       // sameSite: "strict",      // CSRF protection
-       path: "/",  
+      path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
