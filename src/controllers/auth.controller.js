@@ -53,7 +53,7 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
+// but in the devtools in the cookies i can only see the https://mail.slvai.tech not my mail-server-backend.onrender.com
 // Login
 export const login = async (req, res) => {
   try {
@@ -113,13 +113,40 @@ export const login = async (req, res) => {
 };
 
 export const me = async (req, res) => {
-  res.json({
-    user: {
-      id: req.user._id,
-      name: req.user.name,
-      email: req.user.email,
-    },
-  });
+  try {
+    // 🔐 User must be attached by protect middleware
+    if (!req.user_from_cookies) {
+      return res.status(401).json({
+        message: "Not authenticated",
+        user: null,
+      });
+    }
+
+    const { _id, name, email } = req.user_from_cookies;
+
+    // 🧠 Extra safety (should never fail, but defensive)
+    if (!_id || !email) {
+      return res.status(500).json({
+        message: "User data incomplete",
+        user: null,
+      });
+    }
+
+    return res.status(200).json({
+      user: {
+        id: _id,
+        name,
+        email,
+      },
+    });
+  } catch (error) {
+    console.error("ME CONTROLLER ERROR:", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+      user: null,
+    });
+  }
 };
 
 
