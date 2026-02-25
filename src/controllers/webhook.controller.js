@@ -1,5 +1,7 @@
 // controllers/webhook.controller.js
-import { saveMail } from "../models/Mail.model.save.js";
+// import { saveMail } from "../models/Mail.model.save.js";
+import { saveInboundMail } from "../models/InboundMail.save.js";
+
 import logger from "../utils/logger.js";
 
 export const saveMailFromWebhook_resend = async (req, res) => {
@@ -42,7 +44,7 @@ export const saveMailFromWebhook_resend = async (req, res) => {
             })),
         };
 
-        await saveMail(mailData);
+        await saveInboundMail(mailData);
 
         logger.log("✅ MAIL SAVED FROM RESEND WEBHOOK");
         logger.log("   To:", mailData.to);

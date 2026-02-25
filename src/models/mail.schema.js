@@ -1,33 +1,34 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 
-const attachmentSchema = new mongoose.Schema(
-    {
-        filename: String,
-        contentType: String,
-        size: Number,
-    },
-    { _id: false }
-);
+// const attachmentSchema = new mongoose.Schema(
+//     {
+//         filename: String,
+//         contentType: String,
+//         size: Number,
+//     },
+//     { _id: false }
+// );
 
-const mailSchema = new mongoose.Schema({
-    from: String,
-    to: String,
+// const inboundMailSchema = new mongoose.Schema({
+//     from: String,
+//     to: String,
 
-    subject: String,
-    text: String,
-    html: String,
+//     subject: String,
+//     text: String,
+//     html: String,
 
-    messageId: String,
-    date: Date,
+//     messageId: String,
+//     date: Date,
 
-    attachments: [attachmentSchema],
+//     attachments: [attachmentSchema],
 
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-});
+//     createdAt: {
+//         type: Date,
+//         default: Date.now,
+//     },
+// });
 
-// ✅ SAFE EXPORT (this fixes OverwriteModelError)
-module.exports =
-    mongoose.models.Mail || mongoose.model("Mail", mailSchema);
+// // ✅ NEW MODEL NAME (clean, no conflicts)
+// module.exports =
+//     mongoose.models.InboundMail ||
+//     mongoose.model("InboundMail", inboundMailSchema);
