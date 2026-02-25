@@ -10,6 +10,14 @@ export const saveMailFromWebhook_resend = async (req, res) => {
         }
 
         const email = event.data;
+        console.log("📦 DATA KEYS:", Object.keys(email));
+        console.log("📨 SUBJECT:", email.subject);
+        console.log("📨 FROM:", email.from);
+        console.log("📨 TO:", email.to);
+        console.log("📨 TEXT:", email.text);
+        console.log("📨 HTML:", email.html);
+        console.log("📨 RAW:", email.raw);
+        console.log("----- email -----", email);
 
         const mailData = {
             from: email.from,
