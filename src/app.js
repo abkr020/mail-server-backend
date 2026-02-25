@@ -3,6 +3,7 @@ import cors from "cors";
 import { connectDB } from "./db/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import mailRoutes from "./routes/mail.routes.js";
+import webhookRoutes from "./routes/webhook.routes.js";
 // import paymentRoutes from "./routes/payment.routes.js";
 // import productRoutes from "./routes/product.routes.js";
 // import addressRoutes from "./routes/address.routes.js";
@@ -95,6 +96,7 @@ app.use(
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/mail", mailRoutes);
+app.use("/webhooks", webhookRoutes);
 // app.use("/api/payment", paymentRoutes);
 // app.use("/api/products", productRoutes);
 // app.use("/api/address", addressRoutes);
