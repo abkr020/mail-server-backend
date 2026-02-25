@@ -23,7 +23,10 @@ export const saveMailFromWebhook_resend = async (req, res) => {
             from: email.from,
             headerFrom: email.from_name || email.from,
 
-            to: email.to?.[0]?.email?.toLowerCase(),
+            // to: email.to?.[0]?.email?.toLowerCase(),
+            to: typeof email.to?.[0] === "string"
+                ? email.to[0].toLowerCase()
+                : email.to?.[0]?.email?.toLowerCase(),
 
             subject: email.subject || "(no subject)",
             text: email.text || "",
