@@ -28,4 +28,6 @@ const mailSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("Mail", mailSchema);
+// ✅ SAFE EXPORT (this fixes OverwriteModelError)
+module.exports =
+    mongoose.models.Mail || mongoose.model("Mail", mailSchema);
