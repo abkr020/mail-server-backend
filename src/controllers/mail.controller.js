@@ -1,5 +1,5 @@
 import { Mail } from "../models/Mail.model.js";
-const InboundMail = require("../models/inboundMail.schema.js");
+import { InboundMail } from "../models/inboundMail.schema.js";
 
 export const getMyMails = async (req, res) => {
   try {
