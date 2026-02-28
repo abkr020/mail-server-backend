@@ -1,6 +1,6 @@
 import { Mail } from "../models/Mail.model.js";
-import { InboundMail } from "../models/inboundMail.schema.js";
-
+// import { InboundMail } from "../models/inboundMail.schema.js";
+import InboundMail from "../models/inboundMail.schema.js";
 export const getMyMails = async (req, res) => {
   try {
     // const userEmail = req.user.email; // 🔥 from verified JWT
