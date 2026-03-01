@@ -1,5 +1,7 @@
 import { saveInboundMail } from "../models/InboundMail.save.js";
 import logger from "../utils/logger.js";
+import { Resend } from "resend";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const saveMailFromWebhook_resend = async (req, res) => {
     const event = req.body;
@@ -18,6 +20,16 @@ export const saveMailFromWebhook_resend = async (req, res) => {
         console.log("📨 HTML:", email.html);
         console.log("📨 RAW:", email.raw);
         console.log("----- email -----", email);
+        // Step 2: fetch email via Receiving API
+        let fetchedEmail = null;
+        try {
+            const response =
+            await resend.emails.receiving.get(email.email_id);
+            fetchedEmail = response?.data;
+        } catch (err) {
+            logger.warn("⚠️ Failed to fetch inbound email from Resend", err);
+        }
+        console.log("----- fetchedEmail -----", fetchedEmail);
 
         const mailData = {
             from: email.from,
