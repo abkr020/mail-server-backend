@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { handleGoogleAuth } from "../services/auth.service.js";
 
+const allowedDomain = process.env.ALLOWED_EMAIL_DOMAIN;
+
 // Helper: generate JWT token
 const generateToken = (user) => {
   return jwt.sign(
@@ -26,6 +28,7 @@ const setAuthCookie = (res, token) => {
   //   httpOnly: true,
   //   secure: true,
   //   sameSite: "lax", // or strict
+    // domain: `.${allowedDomain}`,
   //   domain: ".slvai.tech",
   // });
 };
@@ -35,8 +38,10 @@ export const signup = async (req, res) => {
     const { name, email, password } = req.body;
 
     // Enforce @slvai.tech domain
-    if (!email.endsWith("@slvai.tech")) {
-      return res.status(400).json({ message: "Email must be a @slvai.tech address" });
+    if (!email.endsWith(`@${allowedDomain}`)) {
+      return res.status(400).json({
+        message: `Email must be a @${allowedDomain} address`,
+      });
     }
 
     const existed = await User.findOne({ email });
