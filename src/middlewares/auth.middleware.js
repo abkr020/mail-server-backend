@@ -24,6 +24,29 @@ export const protect = async (req, res, next) => {
   }
 };
 
+export const verifyTokenFromBody = (req, res, next) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(401).json({ message: "Token not provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded;     // attach user
+    req.token = token;      // attach token if needed
+
+    next();
+  } catch (err) {
+    return res.status(403).json({
+      message: "Invalid or expired token",
+      errorCode: "LOGIN_TO_PROCEED",
+      showMessage: "none"
+    });
+  }
+};
+
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
