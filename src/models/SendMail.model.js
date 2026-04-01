@@ -1,6 +1,15 @@
 // models/SendMail.model.js
 import mongoose from "mongoose";
 
+const attachmentMetaSchema = new mongoose.Schema(
+    {
+        filename: { type: String, required: true },
+        mimetype: { type: String },
+        size: { type: Number },        // bytes
+    },
+    { _id: false }
+);
+
 const sendMailSchema = new mongoose.Schema(
     {
         senderUser: {
@@ -28,6 +37,12 @@ const sendMailSchema = new mongoose.Schema(
 
         text: String,
         html: String,
+
+        // ── NEW: metadata of any attached files (binaries are NOT stored) ──
+        attachments: {
+            type: [attachmentMetaSchema],
+            default: [],
+        },
 
         status: {
             type: String,

@@ -2,6 +2,25 @@
 import { resend } from "../utils/resend.js";
 import { SendMail } from "../models/SendMail.model.js";
 import crypto from "crypto";
+import multer from "multer";
+import fs from "fs";
+
+// ── Multer: store uploads in memory (no temp files on disk) ──
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 25 * 1024 * 1024,   // 25 MB per file
+        files: 10,                      // max 10 attachments
+    },
+});
+
+/**
+ * Multer middleware that accepts multiple files under the field name "attachments".
+ * Attach to your router BEFORE the sendMail handler:
+ *
+ *   router.post("/send", attachmentsUpload, sendMail);
+ */
+export const attachmentsUpload = upload.array("attachments");
 
 export const sendMail = async (req, res) => {
     const traceId = crypto.randomUUID(); // 🔍 request tracking
@@ -18,8 +37,15 @@ export const sendMail = async (req, res) => {
         console.log("👤 Sender :", sender.email);
         console.log("📬 To     :", to);
         console.log("📝 Subject:", subject || "(no subject)");
+        console.log("📎 Attachments :", req.files?.length ?? 0);
 
-        const fromEmail = sender.email; // user@slvai.tech
+        const fromEmail = sender.email;
+
+        // ── Build Resend attachments array from multer memory buffers ──
+        const resendAttachments = (req.files || []).map((file) => ({
+            filename: file.originalname,
+            content: file.buffer,          // Buffer — Resend accepts Buffer directly
+        }));
 
         console.log("🚀 Sending email via Resend...");
 
@@ -30,6 +56,7 @@ export const sendMail = async (req, res) => {
             subject: subject || "(no subject)",
             text,
             html,
+            ...(resendAttachments.length > 0 && { attachments: resendAttachments }),
         });
 
         console.log("✅ Email SENT");
@@ -37,7 +64,13 @@ export const sendMail = async (req, res) => {
 
         console.log("💾 Saving mail to DB (Sent folder)...");
 
-        // 2️⃣ Store in DB (Sent folder)
+        // 2️⃣ Store metadata in DB (we don't store file binaries — just names & sizes)
+        const attachmentsMeta = (req.files || []).map((file) => ({
+            filename: file.originalname,
+            mimetype: file.mimetype,
+            size: file.size,
+        }));
+
         await SendMail.create({
             senderUser: sender._id,
             from: fromEmail,
@@ -45,6 +78,7 @@ export const sendMail = async (req, res) => {
             subject,
             text,
             html,
+            attachments: attachmentsMeta,
             status: "sent",
         });
 
