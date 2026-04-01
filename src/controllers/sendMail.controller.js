@@ -29,6 +29,10 @@ export const sendMail = async (req, res) => {
     console.log("📤 SEND MAIL REQUEST");
     console.log("🆔 Trace ID :", traceId);
 
+    console.log("HEADERS:", req.headers["content-type"]);
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
+
     try {
         // const sender = req.user; // from JWT
         const sender = req.user_from_cookies; // from JWT
