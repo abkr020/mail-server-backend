@@ -35,7 +35,8 @@ export const sendMail = async (req, res) => {
 
     try {
         // const sender = req.user; // from JWT
-        const sender = req.user_from_cookies; // from JWT
+        // const sender = req.user_from_cookies; // from JWT
+        const sender = req.user; // from JWT
         const { to, subject, text, html } = req.body;
 
         console.log("👤 Sender :", sender.email);

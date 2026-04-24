@@ -3,7 +3,8 @@ import { SendMail } from "../models/SendMail.model.js";
 
 export const getSentMails = async (req, res) => {
     try {
-        const sender = req.user_from_cookies;
+        // const sender = req.user_from_cookies;
+        const sender = req.user;
 
         const sentMails = await SendMail.find({
             senderUser: sender._id,

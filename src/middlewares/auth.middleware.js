@@ -5,7 +5,21 @@ import { User } from "../models/User.model.js";
 
 export const protect = async (req, res, next) => {
   try {
-    const token = req.cookies?.token;
+    // const token = req.cookies?.token;
+
+     let token;
+
+    // ✅ 1. Try Authorization header FIRST
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+  // ✅ 2. Fallback to cookie (optional)
+    if (!token && req.cookies?.token) {
+      token = req.cookies.token;
+    }
+
+
     if (!token) {
       return res.status(401).json({ message: "Not authenticated" });
     }
@@ -18,6 +32,7 @@ export const protect = async (req, res, next) => {
     }
 
     req.user_from_cookies = user; // 🔥 attach user to request
+    req.user = user; // 🔥 attach user to request
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
